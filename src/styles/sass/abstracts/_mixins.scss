@@ -1,0 +1,90 @@
+@mixin min-width($breakpoint) {
+  @if map-has-key($breakpoints, $breakpoint) {
+    $breakpoint-value: map-get($breakpoints, $breakpoint);
+
+    @media (min-width: $breakpoint-value) {
+      @content;
+    }
+  }
+  @else {
+    @warn "Invalid breakpoint: #{$breakpoint}.";
+  }
+}
+
+@mixin max-width($breakpoint) {
+  @if map-has-key($breakpoints, $breakpoint) {
+    $breakpoint-value: map-get($breakpoints, $breakpoint);
+
+    @media (max-width: $breakpoint-value) {
+      @content;
+    }
+  }
+  @else {
+    @warn "Invalid breakpoint: #{$breakpoint}.";
+  }
+}
+
+@mixin box-shadow(
+  $shadow1,
+  $shadow2: false,
+  $shadow3: false,
+  $shadow4: false,
+  $shadow5: false
+) {
+  $params: $shadow1;
+  @if $shadow2 {
+    $params: $shadow1, $shadow2;
+  }
+  @if $shadow3 != false {
+    $params: $shadow1, $shadow2, $shadow3;
+  }
+  @if $shadow4 != false {
+    $params: $shadow1, $shadow2, $shadow3, $shadow4;
+  }
+  @if $shadow5 != false {
+    $params: $shadow1, $shadow2, $shadow3, $shadow4, $shadow5;
+  }
+
+  -webkit-box-shadow: $params;
+  -moz-box-shadow: $params;
+  box-shadow: $params;
+}
+
+@mixin transition($transitions...) {
+  $unfoldedtransitions: ();
+  @each $transition in $transitions {
+    $unfoldedtransitions: append(
+      $unfoldedransitions,
+      unfoldtransition($transition),
+      comma
+    );
+  }
+
+  -webkit-transition: $unfoldedTransitions;
+  transition: $unfoldedTransitions;
+}
+
+@function unfoldtransition($transition) {
+  $property: all;
+  $duration: 0.2s;
+  $easing: null;
+  $delay: null;
+  $defaultProperties: ($property, $duration, $easing, $delay);
+
+  $unfoldedtransition: ();
+  @for $i from 1 through length($defaultProperties) {
+    $p: null;
+    @if $i <= length($transition) {
+      $p: nth($transition, $i);
+    }
+    @else {
+      $p: nth($defaultProperties, $i);
+    }
+    $unfoldedTransition: append($unfoldedTransition, $p);
+  }
+
+  @return $unfoldedtransition;
+}
+body {
+  background-color: red;
+}
